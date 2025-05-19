@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SocialMini - Search</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #f5f8fa;
+    }
+    .navbar {
+      width: 100%;
+      background-color: #1da1f2;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .navbar .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .navbar .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+    .navbar .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    .navbar .nav-links a:hover {
+      text-decoration: underline;
+    }
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background-color: #ff4444;
+      color: white;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+    .container {
+      width: 60%;
+      margin-top: 20px;
+    }
+    .post {
+      background-color: white;
+      border: 1px solid #e1e8ed;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .post .content {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .post .media {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+    .auth-container {
+      width: 300px;
+      margin-top: 50px;
+      padding: 20px;
+      background-color: white;
+      border: 1px solid #e1e8ed;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .auth-container h2 {
+      margin-top: 0;
+    }
+    .auth-container input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #e1e8ed;
+      border-radius: 5px;
+    }
+    .auth-container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #1da1f2;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .auth-container button:hover {
+      background-color: #1991db;
+    }
+    .error-message {
+      color: red;
+      margin-bottom: 10px;
+    }
+  </style></head>
+<body>
+  <!-- Navigation Bar -->
+  <div class="navbar">
+    <div class="logo">SocialMini</div>
+    <div class="nav-links" id="navLinks">
+      <a href="home.html">Home</a>
+      <a href="profile.html">Profile</a>
+      <a href="search.html">Search</a>
+      <a href="post.html">Post</a>
+      <a href="#" id="logout">Logout</a>
+    </div>
+  </div>
+  <div class="notification" id="notification"></div>
+
+  <div class="container">
+    <h2>Search Users</h2>
+    <div class="search-container">
+      <input type="text" id="searchQuery" placeholder="Search for users...">
+      <button onclick="searchUsers()">Search</button>
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <script>
+    const apiUrl = 'http://localhost:3000';
+
+    // Check if the user is logged in
+    const token = localStorage.getItem('token');
+    if (!token && !window.location.pathname.endsWith('index.html') && !window.location.pathname.endsWith('register.html')) {
+      window.location.href = 'index.html'; // Redirect to login page if not logged in
+    }
+  
+    // Logout functionality
+    document.getElementById('logout').addEventListener('click', (e) => {
+      e.preventDefault();
+      localStorage.removeItem('token');
+      window.location.href = 'index.html';
+    });
+  
+    // Show notification
+    function showNotification(message) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.style.display = 'block';
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 3000);
+    }
+    // Search users
+    async function searchUsers() {
+      const query = document.getElementById('searchQuery').value;
+      const response = await fetch(`${apiUrl}/search?query=${query}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        const users = await response.json();
+        const searchResults = document.getElementById('searchResults');
+        searchResults.innerHTML = users.map(user => `
+          <div class="user">
+            <p><strong>Username:</strong> ${user.username}</p>
+            <p><strong>Email:</strong> ${user.email}</p>
+          </div>
+        `).join('');
+      } else {
+        showNotification('Failed to search users.');
+      }
+    }
+  </script>
+</body>
+</html>

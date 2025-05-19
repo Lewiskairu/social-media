@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SocialMini - Register</title>
+  <style>
+    /* Global Styles */
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #f0f4f8;
+        min-height: 100vh;
+        color: #333;
+    }
+
+    /* Navbar */
+    .navbar {
+        width: 100%;
+        background: linear-gradient(135deg, #1da1f2, #00c6ff);
+        color: white;
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+        font-size: 1.6rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    /* Registration Form */
+    .registration-container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .registration-container:hover {
+        transform: translateY(-5px);
+    }
+
+    h2 {
+        text-align: center;
+        font-size: 1.8rem;
+        color: #1da1f2;
+        margin-bottom: 20px;
+    }
+
+    /* Form Sections */
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .file-upload-group {
+        border: 2px dashed #e1e8ed;
+        padding: 1.5rem;
+        text-align: center;
+        margin: 1rem 0;
+        border-radius: 8px;
+        background-color: #f9fafb;
+    }
+
+    .file-upload-group input {
+        width: 100%;
+        border: none;
+        font-size: 14px;
+    }
+
+    .file-upload-group label {
+        font-size: 1rem;
+        color: #333;
+    }
+
+    /* Input Fields */
+    .form-group input, select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #e1e8ed;
+        border-radius: 8px;
+        font-size: 16px;
+        background-color: #f9fafb;
+        transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+
+    .form-group input:focus, select:focus {
+        outline: none;
+        border-color: #1da1f2;
+        background-color: #ffffff;
+    }
+
+    /* Error & Success Messages */
+    .error-message, .success-message {
+        font-size: 14px;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .error-message {
+        color: #e0245e;
+    }
+
+    .success-message {
+        color: #17bf63;
+    }
+
+    /* Submit Button */
+    button[type="submit"] {
+        width: 100%;
+        padding: 14px;
+        background-color: #1da1f2;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #1991db;
+        transform: translateY(-2px);
+    }
+
+    button[type="submit"]:disabled {
+        background-color: #a0d4f7;
+        cursor: not-allowed;
+    }
+
+    /* Footer Links */
+    .auth-footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+        color: #657786;
+    }
+
+    .auth-footer a {
+        color: #1da1f2;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+
+    /* Conditional Field Visibility */
+    .conditional-field {
+        display: none;
+    }
+
+    .visible {
+        display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo">SocialMini</div>
+  </div>
+
+  <div class="registration-container">
+    <h2>Create Your Account</h2>
+    <form id="registrationForm" enctype="multipart/form-data">
+      <div class="form-section">
+        <h3>Profile Information</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" required>
+          </div>
+        </div>
+
+        <div class="file-upload-group">
+          <label for="avatar">Profile Picture</label>
+          <input type="file" id="avatar" accept="image/*" required>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Academic Information</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" required>
+            <small class="conditional-field" id="emailHelp">Institutional email required for personal domains</small>
+          </div>
+          <div class="form-group">
+            <label for="userType">User Type</label>
+            <select id="userType" required>
+              <option value="">Select Role</option>
+              <option value="student">Student</option>
+              <option value="lecturer">Lecturer</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="conditional-field" id="schoolIdSection">
+          <div class="file-upload-group">
+            <label for="schoolId">School ID Verification (Required for personal emails)</label>
+            <input type="file" id="schoolId" accept="image/*">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="course">Career Path</label>
+            <select id="course" required>
+              <option value="">Select Course</option>
+              <option value="computer-science">Computer Science</option>
+              <option value="engineering">Engineering</option>
+              <option value="business">Business Administration</option>
+              <option value="medicine">Medicine</option>
+              <option value="law">Law</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="institution">Institution</label>
+            <input type="text" id="institution" required>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn">Create Account</button>
+    </form>
+  </div>
+
+  <script>
+    const blockedDomains = ['gmail.com', 'yahoo.com', 'outlook.com'];
+    const emailField = document.getElementById('email');
+    const schoolIdSection = document.getElementById('schoolIdSection');
+    const schoolIdInput = document.getElementById('schoolId');
+
+    emailField.addEventListener('blur', validateEmailDomain);
+
+    function validateEmailDomain() {
+      const domain = emailField.value.split('@')[1] || '';
+      if (blockedDomains.includes(domain.toLowerCase())) {
+        schoolIdSection.classList.add('visible');
+        schoolIdInput.required = true;
+        document.getElementById('emailHelp').classList.add('visible');
+      } else {
+        schoolIdSection.classList.remove('visible');
+        schoolIdInput.required = false;
+        document.getElementById('emailHelp').classList.remove('visible');
+      }
+    }
+
+    document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Validate required fields
+      const requiredFields = [
+        'username', 'password', 'email', 'userType', 'course', 'institution', 'avatar'
+      ];
+
+      for (let fieldId of requiredFields) {
+        const field = document.getElementById(fieldId);
+        if (!field.value || (field.type === 'file' && !field.files.length)) {
+          alert(`Please fill in the ${fieldId} field.`);
+          return;
+        }
+      }
+
+      if (document.getElementById('schoolId').required && !document.getElementById('schoolId').files[0]) {
+        alert("Please upload your School ID.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('username', document.getElementById('username').value);
+      formData.append('password', document.getElementById('password').value);
+      formData.append('email', document.getElementById('email').value);
+      formData.append('userType', document.getElementById('userType').value);
+      formData.append('course', document.getElementById('course').value);
+      formData.append('institution', document.getElementById('institution').value);
+      formData.append('avatar', document.getElementById('avatar').files[0]);
+
+      if (document.getElementById('schoolId').files[0]) {
+        formData.append('schoolId', document.getElementById('schoolId').files[0]);
+      }
+
+      try {
+        const response = await fetch('/api/register', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message);
+        }
+
+        window.location.href = 'login.html';
+      } catch (error) {
+        alert(`Registration failed: ${error.message}`);
+      }
+    });
+  </script>
+</body>
+</html>

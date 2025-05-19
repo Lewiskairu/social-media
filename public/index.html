@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SocialMini - Login</title>
+  <style>
+    /* CSS Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+
+    /* Body Styles */
+    body {
+      background-color: #f5f8fa;
+      color: #14171a;
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      background-color: #1da1f2;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Main Content */
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      margin-top: 60px; /* Account for fixed navbar */
+    }
+
+    /* Auth Container */
+    .auth-container {
+      width: 100%;
+      max-width: 400px;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      padding: 2rem;
+      border: 1px solid #e1e8ed;
+    }
+
+    .auth-container h2 {
+      color: #1da1f2;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.75rem;
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #657786;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      border: 1px solid #e1e8ed;
+      border-radius: 6px;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #1da1f2;
+      box-shadow: 0 0 0 2px rgba(29, 161, 242, 0.2);
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #1da1f2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn:hover {
+      background-color: #1991db;
+    }
+
+    .btn:disabled {
+      background-color: #aab8c2;
+      cursor: not-allowed;
+    }
+
+    /* Loading Indicator */
+    .loading {
+      display: none;
+      text-align: center;
+      margin: 1rem 0;
+      color: #1da1f2;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    /* Notification */
+    .notification {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      color: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      z-index: 1100;
+      display: none;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .notification.error {
+      background-color: #e0245e;
+    }
+
+    .notification.success {
+      background-color: #17bf63;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Footer Links */
+    .auth-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #657786;
+    }
+
+    .auth-footer a {
+      color: #1da1f2;
+      text-decoration: none;
+    }
+
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">SocialMini</div>
+    <div class="nav-links">
+      <a href="index.html">Login</a>
+      <a href="register.html">Register</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="auth-container">
+      <h2>Welcome back!</h2>
+      
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" class="form-control" placeholder="Enter your username" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+        </div>
+        
+        <div class="loading" id="loading">
+          <p>Signing in...</p>
+        </div>
+        
+        <button type="submit" class="btn" id="loginButton">Log In</button>
+        
+        <div class="auth-footer">
+          <p>Don't have an account? <a href="register.html">Sign up</a></p>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <div class="notification" id="notification"></div>
+
+  <script>
+    // DOM Elements
+    const loginForm = document.getElementById('loginForm');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const loginButton = document.getElementById('loginButton');
+    const loadingIndicator = document.getElementById('loading');
+    const notification = document.getElementById('notification');
+
+    // Show notification function
+    function showNotification(message, isSuccess = false) {
+      notification.textContent = message;
+      notification.className = isSuccess ? 'notification success' : 'notification error';
+      notification.style.display = 'block';
+      
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 3000);
+    }
+
+    // Handle form submission
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      // Validate inputs
+      if (!username || !password) {
+        showNotification('Please fill in all fields');
+        return;
+      }
+
+      // Disable button and show loading
+      loginButton.disabled = true;
+      loadingIndicator.classList.add('active');
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Login failed. Please try again.');
+        }
+
+        // Store user data
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('username', data.username);
+        localStorage.setItem('avatar', data.avatar || 'default-avatar.png');
+
+        // Show success and redirect
+        showNotification('Login successful! Redirecting...', true);
+        setTimeout(() => {
+          window.location.href = 'home.html';
+        }, 1000);
+
+      } catch (error) {
+        console.error('Login error:', error);
+        
+        if (error.message.includes('Failed to fetch')) {
+          showNotification('Network error. Please check your connection.');
+        } else {
+          showNotification(error.message);
+        }
+      } finally {
+        loginButton.disabled = false;
+        loadingIndicator.classList.remove('active');
+      }
+    });
+
+    // Redirect if already logged in
+    if (localStorage.getItem('token')) {
+      window.location.href = 'home.html';
+    }
+  </script>
+</body>
+</html>

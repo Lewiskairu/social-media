@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Existing head content -->
+  <style>
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #1da1f2;
+    }
+    
+    .profile-info h2 {
+      margin-bottom: 5px;
+    }
+    
+    .profile-details {
+      color: #657786;
+      margin-bottom: 5px;
+    }
+    
+    .user-type {
+      background: #e1e8ed;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      display: inline-block;
+    }
+    
+    .follow-section {
+      margin-top: 15px;
+    }
+    
+    .profile-tabs {
+      display: flex;
+      border-bottom: 1px solid #e1e8ed;
+      margin-bottom: 20px;
+    }
+    
+    .profile-tab {
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    
+    .profile-tab.active {
+      border-bottom: 2px solid #1da1f2;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <!-- Existing navbar -->
+  
+  <div class="main-container">
+    <div class="container">
+      <div class="profile-header">
+        <img src="/uploads/default-avatar.png" class="profile-avatar" id="profileAvatar">
+        <div class="profile-info">
+          <h2 id="profileUsername"></h2>
+          <div class="profile-details">
+            <span id="profileCourse"></span> • 
+            <span id="profileInstitution"></span>
+          </div>
+          <div class="user-type" id="profileUserType"></div>
+          <div class="follow-section">
+            <button class="follow-btn" id="followButton"></button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="profile-tabs">
+        <div class="profile-tab active" data-tab="posts">Posts</div>
+        <div class="profile-tab" data-tab="following">Following</div>
+        <div class="profile-tab" data-tab="followers">Followers</div>
+      </div>
+      
+      <div id="profileContent"></div>
+    </div>
+  </div>
+
+  <script>
+    // Profile page functionality
+    const urlParams = new URLSearchParams(window.location.search);
+    const profileUsername = urlParams.get('username');
+    let currentUser = null;
+    let isFollowing = false;
+
+    async function loadProfile() {
+      try {
+        // Load profile data
+        const profile = await apiFetch(`/profile/${profileUsername}`);
+        currentUser = await apiFetch('/profile/me');
+        
+        // Render profile
+        document.getElementById('profileUsername').textContent = profile.username;
+        document.getElementById('profileAvatar').src = `/uploads/${profile.avatar || 'default-avatar.png'}`;
+        document.getElementById('profileCourse').textContent = profile.course;
+        document.getElementById('profileInstitution').textContent = profile.institution;
+        document.getElementById('profileUserType').textContent = profile.userType;
+        
+        // Check follow status
+        const followStatus = await apiFetch(`/users/${profile.username}/follow-status`);
+        isFollowing = followStatus.following;
+        
+        const followButton = document.getElementById('followButton');
+        followButton.textContent = isFollowing ? 'Following' : 'Follow';
+        followButton.style.backgroundColor = isFollowing ? '#657786' : '#1da1f2';
+        followButton.disabled = profile.username === currentUser.username;
+        
+        // Load initial content
+        loadProfileContent('posts');
+      } catch (error) {
+        console.error('Profile load error:', error);
+        showError('Failed to load profile');
+      }
+    }
+
+    async function loadProfileContent(tab) {
+      try {
+        let content;
+        
+        switch(tab) {
+          case 'posts':
+            content = await apiFetch(`/users/${profileUsername}/posts`);
+            renderPosts(content);
+            break;
+          case 'following':
+            content = await apiFetch(`/users/${profileUsername}/following`);
+            renderUserList(content);
+            break;
+          case 'followers':
+            content = await apiFetch(`/users/${profileUsername}/followers`);
+            renderUserList(content);
+            break;
+        }
+      } catch (error) {
+        console.error('Content load error:', error);
+        showError('Failed to load content');
+      }
+    }
+
+    // Tab switching
+    document.querySelectorAll('.profile-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        loadProfileContent(tab.dataset.tab);
+      });
+    });
+
+    // Follow button
+    document.getElementById('followButton').addEventListener('click', async () => {
+      const button = document.getElementById('followButton');
+      button.disabled = true;
+      
+      try {
+        const response = await apiFetch(`/users/${profileUsername}/follow`, {
+          method: 'POST'
+        });
+        
+        isFollowing = response.following;
+        button.textContent = isFollowing ? 'Following' : 'Follow';
+        button.style.backgroundColor = isFollowing ? '#657786' : '#1da1f2';
+      } catch (error) {
+        console.error('Follow error:', error);
+        showError('Failed to update follow status');
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    // Initialize
+    loadProfile();
+  </script>
+</body>
+</html>

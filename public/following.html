@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SocialMini - Following</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f8fa;
+    }
+    .navbar {
+      width: 100%;
+      background-color: #1da1f2;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .navbar .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .navbar .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+    .navbar .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    .navbar .nav-links a:hover {
+      text-decoration: underline;
+    }
+    .container {
+      width: 60%;
+      margin: 20px auto;
+    }
+    .user {
+      background-color: white;
+      border: 1px solid #e1e8ed;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .user a {
+      color: #1da1f2;
+      text-decoration: none;
+    }
+    .user a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <div class="navbar">
+    <div class="logo">SocialMini</div>
+    <div class="nav-links" id="navLinks">
+      <a href="home.html">Home</a>
+      <a href="profile.html">Profile</a>
+      <a href="search.html">Search</a>
+      <a href="post.html">Post</a>
+      <a href="following.html">Following</a>
+      <a href="#" id="logout">Logout</a>
+    </div>
+  </div>
+
+  <!-- Following List -->
+  <div class="container">
+    <h2>Following</h2>
+    <div id="following"></div>
+  </div>
+
+  <script>
+    const apiUrl = 'http://localhost:3000';
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      window.location.href = 'index.html'; // Redirect to login if not logged in
+    }
+
+    // Fetch and display following list
+    async function fetchFollowing() {
+      try {
+        const response = await fetch(`${apiUrl}/following`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const following = await response.json();
+        const followingContainer = document.getElementById('following');
+        followingContainer.innerHTML = '';
+
+        following.forEach(username => {
+          const userElement = document.createElement('div');
+          userElement.className = 'user';
+          userElement.innerHTML = `<a href="profile.html?username=${username}">${username}</a>`;
+          followingContainer.appendChild(userElement);
+        });
+      } catch (err) {
+        console.error('Error fetching following list:', err);
+      }
+    }
+
+    // Logout
+    document.getElementById('logout').addEventListener('click', (e) => {
+      e.preventDefault();
+      localStorage.removeItem('token');
+      window.location.href = 'index.html';
+    });
+
+    // Fetch following list on page load
+    fetchFollowing();
+  </script>
+</body>
+</html>

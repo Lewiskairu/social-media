@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Post - SocialMini</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    
+    body {
+      background-color: #f5f8fa;
+      color: #14171a;
+      min-height: 100vh;
+    }
+    
+    .navbar {
+      width: 100%;
+      background-color: #1da1f2;
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+    
+    .post-form {
+      background-color: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .post-textarea {
+      width: 100%;
+      min-height: 100px;
+      border: none;
+      resize: none;
+      font-size: 1rem;
+      padding: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .post-textarea:focus {
+      outline: none;
+    }
+    
+    .media-preview-container {
+      margin-bottom: 15px;
+      position: relative;
+    }
+    
+    .media-preview {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 8px;
+      display: block;
+      margin: 0 auto;
+    }
+    
+    .video-preview {
+      width: 100%;
+      max-height: 300px;
+      background-color: #000;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .video-preview video {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 8px;
+    }
+    
+    .remove-media {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 25px;
+      height: 25px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .media-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .media-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: #1da1f2;
+    }
+    
+    .post-button {
+      background-color: #1da1f2;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .post-button:disabled {
+      background-color: #9ac9f3;
+      cursor: not-allowed;
+    }
+    
+    .file-input {
+      display: none;
+    }
+    
+    .loading {
+      display: none;
+      text-align: center;
+      margin: 20px 0;
+      color: #1da1f2;
+    }
+    
+    .error-message {
+      color: #e0245e;
+      margin-top: 10px;
+      text-align: center;
+    }
+    
+    .success-message {
+      color: #17bf63;
+      margin-top: 10px;
+      text-align: center;
+    }
+    
+    .file-info {
+      margin-top: 5px;
+      font-size: 0.8rem;
+      color: #657786;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo">SocialMini</div>
+    <a href="home.html" style="color: white; text-decoration: none;">← Back to Feed</a>
+  </div>
+  
+  <div class="container">
+    <div class="post-form">
+      <textarea class="post-textarea" id="postContent" placeholder="What's happening?"></textarea>
+      
+      <div class="media-preview-container" id="mediaPreviewContainer" style="display: none;">
+        <button class="remove-media" id="removeMediaBtn">×</button>
+        <div id="mediaPreview"></div>
+        <div class="file-info" id="fileInfo"></div>
+      </div>
+      
+      <div class="form-actions">
+        <div class="media-buttons">
+          <button class="media-button" title="Add image" id="imageBtn">📷</button>
+          <button class="media-button" title="Add video" id="videoBtn">🎥</button>
+          <input type="file" id="mediaInput" class="file-input" accept="image/*,video/*">
+        </div>
+        <button class="post-button" id="postButton" disabled>Post</button>
+      </div>
+      
+      <div class="loading" id="loading">Posting...</div>
+      <div class="error-message" id="errorMessage"></div>
+      <div class="success-message" id="successMessage"></div>
+    </div>
+  </div>
+
+  <script>
+    const apiUrl = 'http://localhost:3000';
+    const token = localStorage.getItem('token');
+    
+    // DOM Elements
+    const postContent = document.getElementById('postContent');
+    const mediaInput = document.getElementById('mediaInput');
+    const imageBtn = document.getElementById('imageBtn');
+    const videoBtn = document.getElementById('videoBtn');
+    const postButton = document.getElementById('postButton');
+    const loading = document.getElementById('loading');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+    const mediaPreviewContainer = document.getElementById('mediaPreviewContainer');
+    const mediaPreview = document.getElementById('mediaPreview');
+    const removeMediaBtn = document.getElementById('removeMediaBtn');
+    const fileInfo = document.getElementById('fileInfo');
+    
+    // Check authentication
+    if (!token) {
+      window.location.href = 'index.html';
+    }
+    
+    // Media file handling
+    let mediaFile = null;
+    
+    imageBtn.addEventListener('click', () => {
+      mediaInput.click();
+    });
+    
+    videoBtn.addEventListener('click', () => {
+      mediaInput.click();
+    });
+    
+    mediaInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      // Validate file size (max 50MB)
+      if (file.size > 50 * 1024 * 1024) {
+        showError('File size too large (max 50MB)');
+        return;
+      }
+      
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 
+                         'video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/webm', 'video/x-matroska'];
+      if (!validTypes.includes(file.type)) {
+        showError('Unsupported file type. Please upload an image or video.');
+        return;
+      }
+      
+      mediaFile = file;
+      mediaPreview.innerHTML = '';
+      fileInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
+      
+      // Show preview based on file type
+      if (file.type.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.className = 'media-preview';
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          img.src = e.target.result;
+          mediaPreview.appendChild(img);
+          mediaPreviewContainer.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } 
+      else if (file.type.startsWith('video/')) {
+        const videoContainer = document.createElement('div');
+        videoContainer.className = 'video-preview';
+        
+        const video = document.createElement('video');
+        video.controls = true;
+        video.src = URL.createObjectURL(file);
+        
+        videoContainer.appendChild(video);
+        mediaPreview.appendChild(videoContainer);
+        mediaPreviewContainer.style.display = 'block';
+      }
+      
+      updatePostButtonState();
+    });
+    
+    removeMediaBtn.addEventListener('click', () => {
+      mediaFile = null;
+      mediaPreviewContainer.style.display = 'none';
+      mediaInput.value = '';
+      mediaPreview.innerHTML = '';
+      fileInfo.textContent = '';
+      updatePostButtonState();
+    });
+    
+    // Post content validation
+    postContent.addEventListener('input', updatePostButtonState);
+    
+    function updatePostButtonState() {
+      const hasContent = postContent.value.trim().length > 0;
+      const hasMedia = mediaFile !== null;
+      postButton.disabled = !(hasContent || hasMedia);
+    }
+    
+    function formatFileSize(bytes) {
+      if (bytes < 1024) return bytes + ' bytes';
+      else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+      else return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+    
+    // Post submission
+    postButton.addEventListener('click', async () => {
+      const content = postContent.value.trim();
+      
+      if (!content && !mediaFile) {
+        showError('Please add text or media to your post');
+        return;
+      }
+      
+      try {
+        loading.style.display = 'block';
+        errorMessage.textContent = '';
+        successMessage.textContent = '';
+        postButton.disabled = true;
+        
+        const formData = new FormData();
+        if (content) formData.append('content', content);
+        if (mediaFile) formData.append('media', mediaFile);
+        
+        const response = await fetch(`${apiUrl}/api/posts`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to create post');
+        }
+        
+        showSuccess('Post created successfully!');
+        
+        // Clear form
+        postContent.value = '';
+        mediaFile = null;
+        mediaPreviewContainer.style.display = 'none';
+        mediaInput.value = '';
+        mediaPreview.innerHTML = '';
+        fileInfo.textContent = '';
+        updatePostButtonState();
+        
+        // Redirect after delay
+        setTimeout(() => {
+          window.location.href = 'home.html';
+        }, 1500);
+        
+      } catch (error) {
+        console.error('Post creation error:', error);
+        showError(error.message || 'Failed to create post');
+      } finally {
+        loading.style.display = 'none';
+        postButton.disabled = false;
+      }
+    });
+    
+    function showError(message) {
+      errorMessage.textContent = message;
+      setTimeout(() => {
+        errorMessage.textContent = '';
+      }, 5000);
+    }
+    
+    function showSuccess(message) {
+      successMessage.textContent = message;
+      setTimeout(() => {
+        successMessage.textContent = '';
+      }, 5000);
+    }
+  </script>
+</body>
+</html>

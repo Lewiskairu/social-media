@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SocialMini - Home</title>
+  <style>
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    
+    body {
+      background-color: #f5f8fa;
+      color: #14171a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Navbar Styles */
+    .navbar {
+      width: 100%;
+      background-color: #1da1f2;
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+    
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+    
+    .nav-links a:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Main Content Layout */
+    .main-container {
+      display: flex;
+      margin-top: 60px;
+      padding: 20px;
+      gap: 20px;
+    }
+    
+    .container {
+      flex: 1;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .container h2 {
+      margin-bottom: 20px;
+      color: #1da1f2;
+    }
+    
+    /* Posts */
+    .post {
+      background-color: white;
+      border: 1px solid #e1e8ed;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 12px;
+    }
+    
+    .profile-pic {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid #e1e8ed;
+    }
+    
+    .post-content {
+      flex: 1;
+    }
+    
+    .post-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .post-header a {
+      color: #1da1f2;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    
+    .post-header a:hover {
+      text-decoration: underline;
+    }
+    
+    .timestamp {
+      color: #657786;
+      font-size: 0.8rem;
+    }
+    
+    .post-media {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 8px;
+      margin-top: 10px;
+      border: 1px solid #e1e8ed;
+      display: block;
+    }
+    
+    .video-container {
+      background-color: #000;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+    
+    .post-media video {
+      width: 100%;
+      height: auto;
+      max-height: 300px;
+      border-radius: 8px;
+    }
+    
+    .post-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 12px;
+    }
+    
+    .post-actions button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #657786;
+      font-size: 0.9rem;
+    }
+    
+    .post-actions button:hover {
+      color: #1da1f2;
+    }
+    
+    /* Comments Section */
+    .comments-section {
+      margin-top: 15px;
+      border-top: 1px solid #e1e8ed;
+      padding-top: 15px;
+    }
+    
+    .comment {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    
+    .comment-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    
+    .comment-content {
+      flex: 1;
+    }
+    
+    .comment-username {
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    
+    .comment-text {
+      font-size: 0.9rem;
+      margin-top: 2px;
+    }
+    
+    .comment-input {
+      display: flex;
+      margin-top: 10px;
+    }
+    
+    .comment-input input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #e1e8ed;
+      border-radius: 20px;
+      outline: none;
+    }
+    
+    .comment-input input:focus {
+      border-color: #1da1f2;
+    }
+    
+    .comment-input button {
+      margin-left: 8px;
+      background-color: #1da1f2;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .comment-input button:hover {
+      background-color: #1991db;
+    }
+    
+    .comment-input button:disabled {
+      background-color: #a0d4f7;
+      cursor: not-allowed;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      width: 300px;
+      position: sticky;
+      top: 80px;
+      height: fit-content;
+    }
+    
+    .search-container {
+      background-color: white;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid #e1e8ed;
+    }
+    
+    .search-container h3 {
+      margin-bottom: 12px;
+      color: #1da1f2;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #e1e8ed;
+      border-radius: 20px;
+      outline: none;
+    }
+    
+    .search-input:focus {
+      border-color: #1da1f2;
+    }
+    
+    .search-results {
+      margin-top: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      display: none;
+    }
+    
+    .search-result {
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    
+    .search-result:hover {
+      background-color: #f5f8fa;
+    }
+    
+    .search-result-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    
+    .suggestions-container {
+      background-color: white;
+      border-radius: 12px;
+      padding: 15px;
+      border: 1px solid #e1e8ed;
+    }
+    
+    .suggestions-container h3 {
+      margin-bottom: 12px;
+      color: #1da1f2;
+    }
+    
+    .suggestion {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid #e1e8ed;
+    }
+    
+    .suggestion:last-child {
+      border-bottom: none;
+    }
+    
+    /* Loading and Error States */
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #657786;
+    }
+    
+    .error-card {
+      background-color: white;
+      border: 1px solid #e1e8ed;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      color: #e0245e;
+      text-align: center;
+    }
+    
+    .retry-btn {
+      background-color: #1da1f2;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 16px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo" id="userDisplay">SocialMini</div>
+    <div class="nav-links" id="navLinks">
+      <a href="home.html">Home</a>
+      <a href="profile.html" id="profileLink">Profile</a>
+      <a href="search.html">Search</a>
+      <a href="post.html">Post</a>
+      <a href="following.html">Following</a>
+      <a href="#" id="logout">Logout</a>
+    </div>
+  </div>
+  
+  <div class="main-container">
+    <div class="container">
+      <h2>Feed</h2>
+      <div class="loading" id="loading">Loading posts...</div>
+      <div id="posts"></div>
+    </div>
+    
+    <div class="sidebar">
+      <div class="search-container">
+        <h3>Search Users</h3>
+        <input type="text" class="search-input" id="search" placeholder="Search by username...">
+        <div class="search-results" id="searchResults"></div>
+      </div>
+      
+      <div class="suggestions-container">
+        <h3>Suggestions</h3>
+        <div id="suggestions"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration
+    const token = localStorage.getItem('token');
+    let currentUser = null;
+
+    // Check authentication
+    if (!token) {
+      window.location.href = 'index.html';
+    }
+
+    // Enhanced fetch wrapper with error handling
+    async function apiFetch(endpoint, options = {}) {
+      try {
+        const response = await fetch(`/api${endpoint}`, {
+          ...options,
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            ...(options.headers || {})
+          }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || `Request failed with status ${response.status}`);
+        }
+
+        return await response.json();
+      } catch (error) {
+        console.error(`API Error (${endpoint}):`, error);
+        throw error;
+      }
+    }
+
+    // Fetch current user
+    async function fetchCurrentUser() {
+      try {
+        const data = await apiFetch('/profile/me');
+        currentUser = data.username;
+        document.getElementById('userDisplay').textContent = `SocialMini - ${currentUser}`;
+        document.getElementById('profileLink').href = `profile.html?username=${currentUser}`;
+      } catch (error) {
+        showError('Failed to load user profile. Please refresh the page.', 'userError');
+        console.error('Failed to fetch user:', error);
+      }
+    }
+
+    // Fetch posts with error handling
+    async function fetchPosts() {
+      const loadingElement = document.getElementById('loading');
+      const postsContainer = document.getElementById('posts');
+      
+      loadingElement.style.display = 'block';
+      postsContainer.innerHTML = '';
+
+      try {
+        const posts = await apiFetch('/posts/feed');
+        renderPosts(posts);
+      } catch (error) {
+        showError(
+          `Failed to load posts. ${error.message || 'Please try again later.'} 
+          <button class="retry-btn" onclick="fetchPosts()">Retry</button>`,
+          'postsError'
+        );
+        console.error('Failed to fetch posts:', error);
+      } finally {
+        loadingElement.style.display = 'none';
+      }
+    }
+
+    // Render posts to the DOM
+    function renderPosts(posts) {
+      const postsContainer = document.getElementById('posts');
+      postsContainer.innerHTML = '';
+
+      if (!posts || posts.length === 0) {
+        postsContainer.innerHTML = '<div class="error-card">No posts found</div>';
+        return;
+      }
+
+      posts.forEach(post => {
+        const postElement = createPostElement(post);
+        postsContainer.appendChild(postElement);
+      });
+    }
+
+    // Create a single post element
+    function createPostElement(post) {
+      const postElement = document.createElement('div');
+      postElement.className = 'post';
+      postElement.dataset.postId = post.id;
+      
+      // Media rendering logic
+      let mediaContent = '';
+      if (post.media) {
+        const fileExt = post.media.split('.').pop().toLowerCase();
+        const isVideo = ['mp4', 'mov', 'avi', 'webm', 'mkv'].includes(fileExt);
+        
+        if (isVideo) {
+          mediaContent = `
+            <div class="video-container">
+              <video controls class="post-media">
+                <source src="/uploads/${post.media}" type="video/${fileExt}">
+                Your browser does not support videos
+              </video>
+            </div>
+          `;
+        } else {
+          mediaContent = `<img src="/uploads/${post.media}" class="post-media" alt="Post media">`;
+        }
+      }
+
+      // Comments rendering
+      const commentsHTML = post.comments && post.comments.length > 0 ? 
+        post.comments.map(comment => `
+          <div class="comment">
+            <img src="/uploads/${comment.user.avatar || 'default-avatar.png'}" 
+                 class="comment-avatar" 
+                 alt="${comment.user.username}">
+            <div class="comment-content">
+              <div class="comment-username">${comment.user.username}</div>
+              <div class="comment-text">${comment.text}</div>
+              <div class="timestamp">${new Date(comment.createdAt).toLocaleString()}</div>
+            </div>
+          </div>
+        `).join('') : '';
+
+      postElement.innerHTML = `
+        <img src="/uploads/${post.user.avatar || 'default-avatar.png'}" class="profile-pic" alt="${post.user.username}">
+        <div class="post-content">
+          <div class="post-header">
+            <a href="profile.html?username=${post.user.username}">${post.user.username}</a>
+            <span class="timestamp">${new Date(post.createdAt).toLocaleString()}</span>
+          </div>
+          <div>${post.content}</div>
+          ${mediaContent}
+          <div class="post-actions">
+            <button class="like-btn" data-post-id="${post.id}">
+              ${post.liked ? '❤️' : '🤍'} ${post.likes || 0}
+            </button>
+            <button class="comment-btn" data-post-id="${post.id}">
+              💬 ${post.comments ? post.comments.length : 0}
+            </button>
+          </div>
+          <div class="comments-section" id="comments-${post.id}" style="display: none;">
+            ${commentsHTML}
+            <div class="comment-input">
+              <input type="text" 
+                     placeholder="Add a comment..." 
+                     class="comment-text-input" 
+                     data-post-id="${post.id}">
+              <button class="post-comment-btn">Post</button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      return postElement;
+    }
+
+    // Search functionality
+    const searchInput = document.getElementById('search');
+    const searchResults = document.getElementById('searchResults');
+    let searchTimeout;
+
+    searchInput.addEventListener('input', async function() {
+      clearTimeout(searchTimeout);
+      const query = this.value.trim();
+      
+      if (query.length < 2) {
+        searchResults.style.display = 'none';
+        return;
+      }
+      
+      searchResults.innerHTML = '<div class="loading">Searching...</div>';
+      searchResults.style.display = 'block';
+      
+      searchTimeout = setTimeout(async () => {
+        try {
+          const results = await apiFetch(`/search/users?username=${encodeURIComponent(query)}`);
+          renderSearchResults(results, query);
+        } catch (error) {
+          searchResults.innerHTML = `
+            <div class="error-card">
+              Search failed. ${error.message || 'Please try again.'}
+            </div>
+          `;
+          console.error('Search failed:', error);
+        }
+      }, 300);
+    });
+
+    function renderSearchResults(results, query) {
+      searchResults.innerHTML = '';
+      
+      if (!results || results.length === 0) {
+        searchResults.innerHTML = `
+          <div class="error-card">
+            No users found for "${query}"
+          </div>
+        `;
+        return;
+      }
+      
+      results.forEach(user => {
+        const resultElement = document.createElement('div');
+        resultElement.className = 'search-result';
+        resultElement.innerHTML = `
+          <img src="/uploads/${user.avatar || 'default-avatar.png'}" class="search-result-avatar" alt="${user.username}">
+          <div>
+            <div><strong>${user.username}</strong></div>
+            <div style="color: #657786; font-size: 0.8rem;">${user.bio || 'SocialMini user'}</div>
+          </div>
+        `;
+        resultElement.addEventListener('click', () => {
+          window.location.href = `profile.html?username=${user.username}`;
+        });
+        searchResults.appendChild(resultElement);
+      });
+    }
+
+    // Fetch and render suggestions
+    async function fetchSuggestions() {
+      try {
+        const suggestions = await apiFetch('/users/suggestions');
+        renderSuggestions(suggestions);
+      } catch (error) {
+        console.error('Failed to fetch suggestions:', error);
+        document.getElementById('suggestions').innerHTML = `
+          <div class="error-card">
+            Failed to load suggestions. ${error.message || ''}
+          </div>
+        `;
+      }
+    }
+
+    function renderSuggestions(suggestions) {
+      const container = document.getElementById('suggestions');
+      container.innerHTML = '';
+      
+      if (!suggestions || suggestions.length === 0) {
+        container.innerHTML = '<div class="error-card">No suggestions available</div>';
+        return;
+      }
+      
+      suggestions.forEach(user => {
+        const userElement = document.createElement('div');
+        userElement.className = 'suggestion';
+        userElement.innerHTML = `
+          <img src="/uploads/${user.avatar || 'default-avatar.png'}" class="search-result-avatar" alt="${user.username}">
+          <div>
+            <div><strong>${user.username}</strong></div>
+            <div style="color: #657786; font-size: 0.8rem;">${user.bio || 'SocialMini user'}</div>
+          </div>
+        `;
+        userElement.addEventListener('click', () => {
+          window.location.href = `profile.html?username=${user.username}`;
+        });
+        container.appendChild(userElement);
+      });
+    }
+
+    // Event delegation for dynamic elements
+    document.addEventListener('click', async (e) => {
+      // Like button
+      if (e.target.classList.contains('like-btn')) {
+        const postId = e.target.dataset.postId;
+        try {
+          const result = await apiFetch(`/posts/${postId}/like`, { 
+            method: 'POST' 
+          });
+          // Update the button directly
+          e.target.innerHTML = `${result.liked ? '❤️' : '🤍'} ${result.likes}`;
+        } catch (error) {
+          console.error('Like failed:', error);
+          showError('Failed to like post. Please try again.', 'likeError');
+        }
+      }
+      
+      // Comment button - toggle visibility
+      if (e.target.classList.contains('comment-btn')) {
+        const postId = e.target.dataset.postId;
+        const commentsSection = document.getElementById(`comments-${postId}`);
+        commentsSection.style.display = commentsSection.style.display === 'block' ? 'none' : 'block';
+      }
+      
+      // Post comment button
+      if (e.target.classList.contains('post-comment-btn')) {
+        const button = e.target;
+        const input = button.previousElementSibling;
+        const postId = input.dataset.postId;
+        const commentText = input.value.trim();
+        
+        if (!commentText) return;
+        
+        button.disabled = true;
+        button.textContent = 'Posting...';
+        
+        try {
+          // Post the comment
+          const response = await apiFetch(`/posts/${postId}/comment`, {
+            method: 'POST',
+            body: JSON.stringify({ text: commentText })
+          });
+          
+          // Clear input
+          input.value = '';
+          
+          // Get the comments section
+          const commentsSection = document.getElementById(`comments-${postId}`);
+          const commentInput = commentsSection.querySelector('.comment-input');
+          
+          // Create new comment element
+          const commentElement = document.createElement('div');
+          commentElement.className = 'comment';
+          commentElement.innerHTML = `
+            <img src="/uploads/${response.user.avatar || 'default-avatar.png'}" 
+                 class="comment-avatar" 
+                 alt="${response.user.username}">
+            <div class="comment-content">
+              <div class="comment-username">${response.user.username}</div>
+              <div class="comment-text">${response.text}</div>
+              <div class="timestamp">${new Date(response.createdAt).toLocaleString()}</div>
+            </div>
+          `;
+          
+          // Insert before the input
+          commentInput.before(commentElement);
+          
+          // Update comment count
+          const commentBtn = document.querySelector(`.comment-btn[data-post-id="${postId}"]`);
+          const currentCount = parseInt(commentBtn.textContent.match(/\d+/)[0]) || 0;
+          commentBtn.innerHTML = `💬 ${currentCount + 1}`;
+          
+        } catch (error) {
+          console.error('Comment failed:', error);
+          showError('Failed to add comment. Please try again.', 'commentError');
+        } finally {
+          button.disabled = false;
+          button.textContent = 'Post';
+        }
+      }
+    });
+
+    // Handle Enter key for comments
+    document.addEventListener('keypress', async (e) => {
+      if (e.key === 'Enter' && e.target.classList.contains('comment-text-input')) {
+        const input = e.target;
+        const button = input.nextElementSibling;
+        const postId = input.dataset.postId;
+        const commentText = input.value.trim();
+        
+        if (!commentText) return;
+        
+        button.disabled = true;
+        button.textContent = 'Posting...';
+        
+        try {
+          // Post the comment
+          const response = await apiFetch(`/posts/${postId}/comment`, {
+            method: 'POST',
+            body: JSON.stringify({ text: commentText })
+          });
+          
+          // Clear input
+          input.value = '';
+          
+          // Get the comments section
+          const commentsSection = document.getElementById(`comments-${postId}`);
+          const commentInput = commentsSection.querySelector('.comment-input');
+          
+          // Create new comment element
+          const commentElement = document.createElement('div');
+          commentElement.className = 'comment';
+          commentElement.innerHTML = `
+            <img src="/uploads/${response.user.avatar || 'default-avatar.png'}" 
+                 class="comment-avatar" 
+                 alt="${response.user.username}">
+            <div class="comment-content">
+              <div class="comment-username">${response.user.username}</div>
+              <div class="comment-text">${response.text}</div>
+              <div class="timestamp">${new Date(response.createdAt).toLocaleString()}</div>
+            </div>
+          `;
+          
+          // Insert before the input
+          commentInput.before(commentElement);
+          
+          // Update comment count
+          const commentBtn = document.querySelector(`.comment-btn[data-post-id="${postId}"]`);
+          const currentCount = parseInt(commentBtn.textContent.match(/\d+/)[0]) || 0;
+          commentBtn.innerHTML = `💬 ${currentCount + 1}`;
+          
+        } catch (error) {
+          console.error('Comment failed:', error);
+          showError('Failed to add comment. Please try again.', 'commentError');
+        } finally {
+          button.disabled = false;
+          button.textContent = 'Post';
+        }
+      }
+    });
+
+    // Logout functionality
+    document.getElementById('logout').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      window.location.href = 'index.html';
+    });
+
+    // Show error message
+    function showError(message, errorId = 'genericError') {
+      const errorElement = document.createElement('div');
+      errorElement.className = 'error-card';
+      errorElement.id = errorId;
+      errorElement.innerHTML = message;
+      
+      // Remove existing error if it exists
+      const existingError = document.getElementById(errorId);
+      if (existingError) {
+        existingError.remove();
+      }
+      
+      document.getElementById('posts').prepend(errorElement);
+    }
+
+    // Initialize the application
+    async function initializeApp() {
+      await fetchCurrentUser();
+      await fetchPosts();
+      await fetchSuggestions();
+    }
+
+    // Start the application
+    initializeApp();
+  </script>
+</body>
+</html>
